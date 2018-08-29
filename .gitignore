@@ -8,6 +8,7 @@
 /out/*
 /asm/*
 /bin/*
+/classes/*
 
 #File Extensions
 *.psd
@@ -21,3 +22,8 @@
 MCFPost.txt
 Thumbs.db
 curse.gradle
+
+#idea
+.idea
+*.iml
+run

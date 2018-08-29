@@ -1,5 +1,6 @@
 package tombenpotter.sanguimancy.proxy;
 
+import WayofTime.bloodmagic.client.render.block.RenderBloodTank;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelChicken;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +11,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import tombenpotter.sanguimancy.client.particle.EntityColoredFlameFX;
@@ -31,7 +31,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void load() {
         registerRenders();
-        FMLCommonHandler.instance().bus().register(new EventHandler.ClientEventHandler());
         MinecraftForge.EVENT_BUS.register(new EventHandler.ClientEventHandler());
     }
 
@@ -42,12 +41,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerRenders() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileAltarDiviner.class, new RenderAltarDiviner());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileCorruptionCrystallizer.class, new RenderCorruptionCrystallizer());
-        RenderingRegistry.registerBlockHandler(BlocksRegistry.bloodTank.getRenderType(), new RenderBloodTank());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileItemSNPart.class, new RenderBoundItem());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileCorruptionCrystallizer.class, new RenderCorruptionCrystallizer());
+        //RenderingRegistry.registerBlockHandler(BlocksRegistry.bloodTank.getRenderType(), new RenderBloodTank());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileItemSNPart.class, new RenderBoundItem());
         ClientRegistry.bindTileEntitySpecialRenderer(TileBloodInterface.class, new RenderBloodInterface());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileSimpleSNBranch.class, new RenderSoulBranch());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileRitualSNPart.class, new RenderRitualRepresentation());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileSimpleSNBranch.class, new RenderSoulBranch());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileRitualSNPart.class, new RenderRitualRepresentation());
         ClientRegistry.bindTileEntitySpecialRenderer(TileAltarManipulator.class, new RenderAltarManipulator());
 
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlocksRegistry.altarDiviner), new RenderAltarDiviner());
@@ -60,14 +59,13 @@ public class ClientProxy extends CommonProxy {
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(BlocksRegistry.altarManipulator), new RenderAltarManipulator());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityChickenMinion.class, new RenderChickenMinion(new ModelChicken(), 1.0F));
-        RenderingRegistry.registerEntityRenderingHandler(EntityPlayerPointer.class, new RenderPlayerPointer());
-
+        //RenderingRegistry.registerEntityRenderingHandler(EntityPlayerPointer.class, new RenderPlayerPointer());
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public EntityPlayer getClientPlayer() {
-        return Minecraft.getMinecraft().thePlayer;
+        return Minecraft.getMinecraft().player;
     }
 
     @SideOnly(Side.CLIENT)
@@ -78,6 +76,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public World getClientWorld() {
-        return Minecraft.getMinecraft().theWorld;
+        return Minecraft.getMinecraft().world;
     }
 }

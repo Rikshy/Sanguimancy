@@ -14,10 +14,10 @@ public class PotionsRegistry {
     public static Potion potionRemoveHeart;
 
     public static void registerPotions() {
-        potionAddHeart = new PotionAddHeart(Color.RED.getRGB()).setRegistryName(Sanguimancy.modid, "AddHeartPotion").setPotionName("AddHeart");
-        GameRegistry.register(potionAddHeart);
+       // potionAddHeart = new PotionAddHeart(Color.RED.getRGB()).setRegistryName(Sanguimancy.modid, "AddHeartPotion").setPotionName("AddHeart");
+        //GameRegistry.register(potionAddHeart);
 
-        potionRemoveHeart = new PotionRemoveHeart(Color.GRAY.getRGB()).setRegistryName(Sanguimancy.modid, "RemoveHeartPotion").setPotionName("RemoveHeart");
-        GameRegistry.register(potionRemoveHeart);
+        //potionRemoveHeart = new PotionRemoveHeart(Color.GRAY.getRGB()).setRegistryName(Sanguimancy.modid, "RemoveHeartPotion").setPotionName("RemoveHeart");
+        //GameRegistry.register(potionRemoveHeart);
     }
 }

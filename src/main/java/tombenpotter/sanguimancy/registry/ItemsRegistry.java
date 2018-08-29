@@ -1,12 +1,17 @@
 package tombenpotter.sanguimancy.registry;
 
 import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import tombenpotter.sanguimancy.Sanguimancy;
 import tombenpotter.sanguimancy.items.ItemBloodAmulet;
 import tombenpotter.sanguimancy.items.ItemPlayerSacrificer;
 import tombenpotter.sanguimancy.items.ItemResource;
 
+@Mod.EventBusSubscriber
 public class ItemsRegistry {
 
     public static Item playerSacrificer;
@@ -21,15 +26,18 @@ public class ItemsRegistry {
     public static Item corruptedAxe;
     */
 
-    public static void registerItems() {
+    @SubscribeEvent
+    public static void registerBlockItems(RegistryEvent.Register<Item> event) {
+        IForgeRegistry<Item> registry = event.getRegistry();
+
         playerSacrificer = new ItemPlayerSacrificer().setRegistryName(Sanguimancy.modid, "playerSacrificer");
-        GameRegistry.register(playerSacrificer);
+        registry.register(playerSacrificer);
 
         bloodAmulet = new ItemBloodAmulet().setRegistryName(Sanguimancy.modid, "bloodAmulet");
-        GameRegistry.register(bloodAmulet);
+        registry.register(bloodAmulet);
 
         resource = new ItemResource().setRegistryName(Sanguimancy.modid, "resource");
-        GameRegistry.register(resource);
+        registry.register(resource);
 
 
         /*

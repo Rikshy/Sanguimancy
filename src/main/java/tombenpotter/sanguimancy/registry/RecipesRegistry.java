@@ -1,6 +1,9 @@
 package tombenpotter.sanguimancy.registry;
 
 import WayofTime.bloodmagic.alchemyArray.AlchemyArrayEffectBinding;
+import WayofTime.bloodmagic.alchemyArray.AlchemyArrayEffectCrafting;
+import WayofTime.bloodmagic.altar.AltarTier;
+import WayofTime.bloodmagic.api.IBloodMagicRecipeRegistrar;
 import WayofTime.bloodmagic.api.alchemyCrafting.AlchemyArrayEffectCrafting;
 import WayofTime.bloodmagic.api.alchemyCrafting.AlchemyCircleRenderer;
 import WayofTime.bloodmagic.api.altar.EnumAltarTier;
@@ -9,13 +12,18 @@ import WayofTime.bloodmagic.api.registry.AlchemyArrayRecipeRegistry;
 import WayofTime.bloodmagic.api.registry.AltarRecipeRegistry;
 import WayofTime.bloodmagic.api.registry.OrbRegistry;
 import WayofTime.bloodmagic.client.render.alchemyArray.BindingAlchemyCircleRenderer;
+import WayofTime.bloodmagic.core.registry.AlchemyArrayRecipeRegistry;
+import WayofTime.bloodmagic.core.registry.AltarRecipeRegistry;
 import WayofTime.bloodmagic.item.ItemComponent;
-import WayofTime.bloodmagic.registry.ModBlocks;
+import WayofTime.bloodmagic.core.RegistrarBloodMagicBlocks;
+import WayofTime.bloodmagic.core.RegistrarBloodMagicItems;
+import WayofTime.bloodmagic.item.types.ComponentTypes;
 import WayofTime.bloodmagic.registry.ModItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import tombenpotter.sanguimancy.api.registries.RecipeRegistry;
@@ -47,35 +55,35 @@ public class RecipesRegistry {
 //        largeBloodstoneStairs = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.largeBloodStoneStairs, 4), "X  ", "XX ", "XXX", 'X', ModBlocks.largeBloodStoneBrick);
 //        bloodstoneSlab = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.bloodstoneSlab, 6), "XXX", 'X', ModBlocks.bloodStoneBrick);
 //        largeBloodstoneSlab = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.largeBloodstoneSlab, 6), "XXX", 'X', ModBlocks.largeBloodStoneBrick);
-        GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.bloodStoneBrick), "X", "X", 'X', SanguimancyItemStacks.bloodstoneSlab);
+        GameRegistry.addShapedRecipe(new ItemStack(RegistrarBloodMagicBlocks.DECORATIVE_BRICK), "X", "X", 'X', SanguimancyItemStacks.bloodstoneSlab);
 //        GameRegistry.addShapedRecipe(new ItemStack(ModBlocks.largeBloodStoneBrick), "X", "X", 'X', SanguimancyItemStacks.largeBloodstoneSlab);
         chunkClaimer = GameRegistry.addShapedRecipe(SanguimancyItemStacks.chunkClaimer, " X ", "XYX", " X ", 'X', new ItemStack(ModItems.slate, 1, 3), 'Y', SanguimancyItemStacks.corruptedDemonShard);
 //        wand = GameRegistry.addShapedRecipe(SanguimancyItemStacks.wand, "XYX", "XZX", "XZX", 'X', new ItemStack(ModItems.slate, 1, 1), 'Y', ModItems.itemComplexSpellCrystal, 'Z', Items.STICK);
         corruptedMineral = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedMineral, " X ", " Y ", "ZYA", 'X', new ItemStack(Items.SKULL, 1, 1), 'Y', Blocks.STONE, 'Z', Items.DIAMOND, 'A', Items.GOLD_INGOT);
-        corruptedSword = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedSword, " X ", " X ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
-        corruptedPickaxe = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedPickaxe, "XXX", " Y ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
-        corruptedShovel = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedShovel, " X ", " Y ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
-        corruptedAxe = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedAxe, "XX ", "XY ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
-        toggledEtherealBlock = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.etherealToggledBlock, 8), "XXX", "XYX", "XXX", 'Y', Blocks.REDSTONE_BLOCK, 'X', SanguimancyItemStacks.etherealBlock);
-        personalEtherealBlock = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.etherealPersonalBlock, 8), "XXX", "XYX", "XXX", 'X', SanguimancyItemStacks.etherealBoundBlock, 'Y', Items.NAME_TAG);
+        //corruptedSword = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedSword, " X ", " X ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
+        //corruptedPickaxe = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedPickaxe, "XXX", " Y ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
+        //corruptedShovel = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedShovel, " X ", " Y ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
+        //corruptedAxe = GameRegistry.addShapedRecipe(SanguimancyItemStacks.corruptedAxe, "XX ", "XY ", " Y ", 'X', SanguimancyItemStacks.corruptedMineral, 'Y', SanguimancyItemStacks.imbuedStick);
+        //toggledEtherealBlock = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.etherealToggledBlock, 8), "XXX", "XYX", "XXX", 'Y', Blocks.REDSTONE_BLOCK, 'X', SanguimancyItemStacks.etherealBlock);
+        //personalEtherealBlock = GameRegistry.addShapedRecipe(new ItemStack(BlocksRegistry.etherealPersonalBlock, 8), "XXX", "XYX", "XXX", 'X', SanguimancyItemStacks.etherealBoundBlock, 'Y', Items.NAME_TAG);
         bloodInterface = GameRegistry.addShapedRecipe(SanguimancyItemStacks.bloodInterface, "XYX", "XZX", "XXX", 'X', Blocks.STONE, 'Y', new ItemStack(ModBlocks.bloodRune, 1, 0), 'Z', new ItemStack(Items.COMPARATOR));
     }
 
     public static void registerAltarRecipes() {
-        altarDiviner = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.altarDiviner, new ItemStack(ModBlocks.altar), EnumAltarTier.THREE, 3000, 10, 10, false);
+        altarDiviner = new AltarRecipeRegistry.AltarRecipe(new ItemStack(RegistrarBloodMagicBlocks.ALTAR), SanguimancyItemStacks.altarDiviner, AltarTier.THREE, 3000, 10, 10, false);
         AltarRecipeRegistry.registerRecipe(altarDiviner);
 
-        attunedPlayerSacrificer = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.attunnedPlayerSacrificer, SanguimancyItemStacks.unattunedPlayerSacrificer, EnumAltarTier.FIVE, 30000, 10, 10, false);
+        attunedPlayerSacrificer = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.unattunedPlayerSacrificer, SanguimancyItemStacks.attunnedPlayerSacrificer, AltarTier.FIVE, 30000, 10, 10, false);
         AltarRecipeRegistry.registerRecipe(attunedPlayerSacrificer);
 
-        corruptionCatalyst = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.corruptionCatalist, new ItemStack(Items.SKULL, 1, 1), EnumAltarTier.THREE, 3000, 10, 10, false);
-        AltarRecipeRegistry.registerRecipe(corruptionCatalyst);
+        //corruptionCatalyst = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.corruptionCatalist, new ItemStack(Items.SKULL, 1, 1), EnumAltarTier.THREE, 3000, 10, 10, false);
+        //AltarRecipeRegistry.registerRecipe(corruptionCatalyst);
 
-        imbuedStick = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.imbuedStick, new ItemStack(Items.STICK), EnumAltarTier.TWO, 3000, 10, 10, false);
+        imbuedStick = new AltarRecipeRegistry.AltarRecipe(new ItemStack(Items.STICK), SanguimancyItemStacks.imbuedStick, AltarTier.TWO, 3000, 10, 10, false);
         AltarRecipeRegistry.registerRecipe(imbuedStick);
 
-        etherealManifestation = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.etherealManifestation, SanguimancyItemStacks.corruptionCatalist, EnumAltarTier.FOUR, 6000, 10, 10, false);
-        AltarRecipeRegistry.registerRecipe(etherealManifestation);
+        //etherealManifestation = new AltarRecipeRegistry.AltarRecipe(SanguimancyItemStacks.etherealManifestation, SanguimancyItemStacks.corruptionCatalist, EnumAltarTier.FOUR, 6000, 10, 10, false);
+        //AltarRecipeRegistry.registerRecipe(etherealManifestation);
     }
 
     public static void registerOrbRecipes() {
@@ -103,10 +111,10 @@ public class RecipesRegistry {
     }
 
     public static void registerBindingRecipes() {
-        AlchemyArrayRecipeRegistry.registerRecipe(ItemComponent.getStack(ItemComponent.REAGENT_BINDING), SanguimancyItemStacks.etherealBlock, new AlchemyArrayEffectBinding("boundBlock", SanguimancyItemStacks.etherealBoundBlock), new BindingAlchemyCircleRenderer());
-        AlchemyArrayRecipeRegistry.registerRecipe(ItemComponent.getStack(ItemComponent.REAGENT_BINDING), SanguimancyItemStacks.etherealCorruptedBlock, new AlchemyArrayEffectBinding("boundCorruptedBlock", SanguimancyItemStacks.etherealBoundCorruptedBlock), new BindingAlchemyCircleRenderer());
-        AlchemyArrayRecipeRegistry.registerRecipe(ItemComponent.getStack(ItemComponent.REAGENT_BINDING), SanguimancyItemStacks.etherealToggledBlock, new AlchemyArrayEffectBinding("boundToggledBlock", SanguimancyItemStacks.etherealBoundToggledBlock), new BindingAlchemyCircleRenderer());
-        AlchemyArrayRecipeRegistry.registerRecipe(ItemComponent.getStack(ItemComponent.REAGENT_VOID), new ItemStack(Blocks.SOUL_SAND), new AlchemyArrayEffectCrafting(SanguimancyItemStacks.etherealBlock), new AlchemyCircleRenderer());
+        //AlchemyArrayRecipeRegistry.registerRecipe(ComponentTypes.REAGENT_BINDING.getStack(), SanguimancyItemStacks.etherealBlock, new AlchemyArrayEffectBinding("boundBlock", SanguimancyItemStacks.etherealBoundBlock), new BindingAlchemyCircleRenderer());
+        //AlchemyArrayRecipeRegistry.registerRecipe(ComponentTypes.REAGENT_BINDING.getStack(), SanguimancyItemStacks.etherealCorruptedBlock, new AlchemyArrayEffectBinding("boundCorruptedBlock", SanguimancyItemStacks.etherealBoundCorruptedBlock), new BindingAlchemyCircleRenderer());
+        //AlchemyArrayRecipeRegistry.registerRecipe(ComponentTypes.REAGENT_BINDING.getStack(), SanguimancyItemStacks.etherealToggledBlock, new AlchemyArrayEffectBinding("boundToggledBlock", SanguimancyItemStacks.etherealBoundToggledBlock), new BindingAlchemyCircleRenderer());
+        //AlchemyArrayRecipeRegistry.registerRecipe(ComponentTypes.REAGENT_VOID.getStack(), new ItemStack(Blocks.SOUL_SAND), new AlchemyArrayEffectCrafting(SanguimancyItemStacks.etherealBlock), new AlchemyCircleRenderer());
     }
 
     public static void registerCustomModRecipes() {

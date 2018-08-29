@@ -7,9 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tombenpotter.sanguimancy.api.tiles.TileBaseSidedInventory;
 import tombenpotter.sanguimancy.recipes.RecipeBloodCleanser;
@@ -32,7 +30,7 @@ public class TileBloodCleaner extends TileBaseSidedInventory implements ITickabl
 
     @Override
     public void update() {
-        if (inventory.getStackInSlot(0) != null && canBloodClean()) {
+        if (!inventory.getStackInSlot(0).isEmpty() && canBloodClean()) {
             if (ticksLeft >= maxTicks) {
                 bloodClean();
                 ticksLeft = 0;
@@ -50,19 +48,20 @@ public class TileBloodCleaner extends TileBaseSidedInventory implements ITickabl
 
     public void bloodClean() {
         if (canBloodClean()) {
-            ItemStack ouput = RecipeBloodCleanser.getRecipe(inventory.getStackInSlot(0)).fOutput.copy();
-            if (inventory.getStackInSlot(1) == null) {
+            RecipeBloodCleanser cleaner = RecipeBloodCleanser.getRecipe(inventory.getStackInSlot(0));
+            ItemStack ouput = cleaner.fOutput.copy();
+            if (inventory.getStackInSlot(1).isEmpty()) {
                 inventory.setStackInSlot(1, ouput);
-            } else if (inventory.getStackInSlot(1).isItemEqual(RecipeBloodCleanser.getRecipe(inventory.getStackInSlot(0)).fOutput.copy())) {
-                inventory.getStackInSlot(1).stackSize += ouput.stackSize;
+            } else if (inventory.getStackInSlot(1).isItemEqual(cleaner.fOutput.copy())) {
+                inventory.getStackInSlot(1).grow(ouput.getCount());
             }
-            getInventory(null).extractItem(0, RecipeBloodCleanser.getRecipe(inventory.getStackInSlot(0)).fInput.stackSize, false);
+            getInventory(null).extractItem(0, cleaner.fInput.getCount(), false);
             tank.drain(Fluid.BUCKET_VOLUME, true);
         }
     }
 
     public boolean canBloodClean() {
-        if (getInventory(null).getStackInSlot(0) == null) {
+        if (getInventory(null).getStackInSlot(0).isEmpty()) {
             return false;
         } else {
             ItemStack input = getInventory(null).getStackInSlot(0);
@@ -72,21 +71,21 @@ public class TileBloodCleaner extends TileBaseSidedInventory implements ITickabl
             if (tank.getFluid() == null) {
                 return false;
             }
-            if (tank.getFluidAmount() < FluidContainerRegistry.BUCKET_VOLUME) {
+            if (tank.getFluidAmount() < Fluid.BUCKET_VOLUME) {
                 return false;
             }
             RecipeBloodCleanser recipe = RecipeBloodCleanser.getRecipe(input);
             ItemStack output = recipe.fOutput.copy();
-            if (inventory.getStackInSlot(1) == null) {
+            if (inventory.getStackInSlot(1).isEmpty()) {
                 return true;
             }
             if (!inventory.getStackInSlot(1).isItemEqual(output)) {
                 return false;
             }
-            if (!(tank.getFluid().amount >= FluidContainerRegistry.BUCKET_VOLUME)) {
+            if (!(tank.getFluid().amount >= Fluid.BUCKET_VOLUME)) {
                 return false;
             }
-            int result = inventory.getStackInSlot(1).stackSize + output.stackSize;
+            int result = inventory.getStackInSlot(1).getCount() + output.getCount();
             return result <= inventory.getStackInSlot(1).getMaxStackSize();
         }
     }

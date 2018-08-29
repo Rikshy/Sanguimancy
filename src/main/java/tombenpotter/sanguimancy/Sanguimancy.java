@@ -28,7 +28,7 @@ import tombenpotter.sanguimancy.util.enums.ModList;
 @Mod(modid = Sanguimancy.modid, name = Sanguimancy.name, version = Sanguimancy.version, dependencies = Sanguimancy.depend, guiFactory = "tombenpotter.sanguimancy.client.gui.ConfigGuiFactory")
 public class Sanguimancy {
 
-    public static final String modid = "Sanguimancy";
+    public static final String modid = "sanguimancy";
     public static final String name = "Sanguimancy";
     public static final String texturePath = "sanguimancy";
     public static final String clientProxy = "tombenpotter.sanguimancy.proxies.ClientProxy";
@@ -58,8 +58,6 @@ public class Sanguimancy {
         ConfigHandler.init(event.getSuggestedConfigurationFile());
         RandomUtils.addOreDictColors();
         TileRegistry.registerTEs();
-        BlocksRegistry.registerBlocks();
-        ItemsRegistry.registerItems();
         RecipesRegistry.registerShapedRecipes();
         RecipesRegistry.registerOrbRecipes();
         EntitiesRegistry.registerEntities();

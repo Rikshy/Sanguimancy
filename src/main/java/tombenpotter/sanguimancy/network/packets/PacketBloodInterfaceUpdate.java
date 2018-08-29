@@ -20,9 +20,9 @@ public class PacketBloodInterfaceUpdate implements IMessage {
     }
 
     public PacketBloodInterfaceUpdate(TileBloodInterface tileBloodInterface) {
-        this.pos = tileBloodInterface.pos;
-        ItemStack stack = tileBloodInterface.getStackInSlot(0);
-        if (stack != null) {
+        this.pos = tileBloodInterface.getPos();
+        ItemStack stack = tileBloodInterface.getInventory(null).getStackInSlot(0);
+        if (!stack.isEmpty()) {
             itemName = stack.getItem().getRegistryName();
             itemDamage = stack.getItemDamage();
             if (stack.hasTagCompound() && stack.getTagCompound().hasKey("ownerName")) {

@@ -1,21 +1,15 @@
 package tombenpotter.sanguimancy.client.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import org.lwjgl.opengl.GL11;
 import tombenpotter.sanguimancy.Sanguimancy;
 import tombenpotter.sanguimancy.client.model.ModelAltarDiviner;
-import tombenpotter.sanguimancy.registry.BlocksRegistry;
 import tombenpotter.sanguimancy.tiles.TileAltarDiviner;
-
-import static net.minecraft.creativetab.CreativeTabs.INVENTORY;
 
 public class RenderAltarDiviner extends TileEntitySpecialRenderer<TileAltarDiviner> {
     public ModelAltarDiviner model = new ModelAltarDiviner();
@@ -25,18 +19,16 @@ public class RenderAltarDiviner extends TileEntitySpecialRenderer<TileAltarDivin
     }
 
     @Override
-    public void renderTileEntityAt(TileAltarDiviner tile, double x, double y, double z, float scale) {
-        renderModel((TileAltarDiviner) tileEntity, x, y, z);
-        if (tileEntity instanceof TileAltarDiviner) {
-            TileAltarDiviner tile = (TileAltarDiviner) tileEntity;
+    public void render(TileAltarDiviner te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        renderModel(te, x, y, z);
             GL11.glPushMatrix();
-            if (tile.getInventory(null).getStackInSlot(0) != null) {
-                float scaleFactor = getGhostItemScaleFactor(tile.getInventory(null).getStackInSlot(0));
+            if (!te.getInventory(null).getStackInSlot(0).isEmpty()) {
+                float scaleFactor = 0.75F;
                 float rotationAngle = (float) (720.0 * (System.currentTimeMillis() & 0x3FFFL) / 0x3FFFL);
-                EntityItem ghostEntityItem = new EntityItem(tile.getWorld());
+                EntityItem ghostEntityItem = new EntityItem(te.getWorld());
                 ghostEntityItem.hoverStart = 0.0F;
-                ghostEntityItem.setEntityItemStack(tile.getInventory(null).getStackInSlot(0));
-                if (ghostEntityItem.getEntityItem().getItem() instanceof ItemBlock) {
+                ghostEntityItem.setItem(te.getInventory(null).getStackInSlot(0));
+                if (ghostEntityItem.getItem().getItem() instanceof ItemBlock) {
                     GL11.glTranslatef((float) x + 0.5F, (float) y + 1F, (float) z + 0.5F);
                 } else {
                     GL11.glTranslatef((float) x + 0.5F, (float) y + 1F, (float) z + 0.5F);
@@ -45,7 +37,6 @@ public class RenderAltarDiviner extends TileEntitySpecialRenderer<TileAltarDivin
                 GL11.glRotatef(rotationAngle, 0.0F, 1.0F, 0.0F);
             }
             GL11.glPopMatrix();
-        }
     }
 
     public void renderModel(TileAltarDiviner tile, double x, double y, double z) {

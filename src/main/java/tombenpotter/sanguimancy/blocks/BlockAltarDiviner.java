@@ -10,53 +10,53 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import tombenpotter.sanguimancy.Sanguimancy;
 import tombenpotter.sanguimancy.tiles.TileAltarDiviner;
 import tombenpotter.sanguimancy.util.RandomUtils;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class BlockAltarDiviner extends BlockContainer {
 
     public BlockAltarDiviner(Material material) {
         super(material);
         setHardness(5.0F);
-        setCreativeTab(Sanguimancy.tabSanguimancy);
+        setCreativeTab(Sanguimancy.creativeTab);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
         return new TileAltarDiviner();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileAltarDiviner tile = (TileAltarDiviner) world.getTileEntity(pos);
-        if (player.getHeldItem(EnumHand.MAIN_HAND) == null && tile.getInventory(null).getStackInSlot(0) != null) {
-            ItemStack stack = tile.getInventory(null).getStackInSlot(0);
-            tile.getInventory(null).extractItem(0, stack.stackSize, false);
-            player.inventory.addItemStackToInventory(stack);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        TileEntity tmp = world.getTileEntity(pos);
+        if (tmp instanceof TileAltarDiviner) {
+            TileAltarDiviner tile = (TileAltarDiviner)tmp;
 
-            world.notifyBlockUpdate(pos, state, state, 3);
-        } else if (player.getHeldItem(EnumHand.MAIN_HAND) != null && tile.getInventory(null).getStackInSlot(0) == null) {
-            ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-            tile.getInventory(null).setStackInSlot(0, stack.copy());
+            if (player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && !tile.getInventory(null).getStackInSlot(0).isEmpty()) {
+                ItemStack stack = tile.getInventory(null).getStackInSlot(0);
+                tile.getInventory(null).extractItem(0, stack.getCount(), false);
+                player.inventory.addItemStackToInventory(stack);
 
-            if (!player.capabilities.isCreativeMode) {
-                for (int i = 0; i < stack.stackSize; i++) {
-                    if (stack.stackSize <= 0) {
-                        player.inventory.deleteStack(stack);
-                    } else {
-                        player.getHeldItem(EnumHand.MAIN_HAND).stackSize--;
-                    }
+                world.notifyBlockUpdate(pos, state, state, 3);
+            } else if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && tile.getInventory(null).getStackInSlot(0).isEmpty()) {
+                ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+                tile.getInventory(null).setStackInSlot(0, stack.copy());
+
+                if (!player.capabilities.isCreativeMode) {
+                    player.getHeldItem(EnumHand.MAIN_HAND).setCount(0);
                 }
+                world.notifyBlockUpdate(pos, state, state, 3);
             }
-            world.notifyBlockUpdate(pos, state, state, 3);
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         RandomUtils.dropItems(world, pos);
         super.breakBlock(world, pos, state);
     }

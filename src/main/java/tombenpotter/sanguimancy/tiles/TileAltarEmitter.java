@@ -3,11 +3,11 @@ package tombenpotter.sanguimancy.tiles;
 import WayofTime.bloodmagic.block.BlockAltar;
 import WayofTime.bloodmagic.tile.TileAltar;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import tombenpotter.sanguimancy.api.tiles.TileBase;
-import tombenpotter.sanguimancy.blocks.BlockAltarEmitter;
 
 public class TileAltarEmitter extends TileBase implements ITickable {
 
@@ -21,14 +21,13 @@ public class TileAltarEmitter extends TileBase implements ITickable {
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             for (EnumFacing dir : EnumFacing.HORIZONTALS) {
                 BlockPos newPos = pos.add(dir.getDirectionVec());
-                if (!worldObj.isAirBlock(newPos) && worldObj.getBlockState(newPos).getBlock() instanceof BlockAltar) {
-                    if (worldObj.getTileEntity(newPos) != null && worldObj.getTileEntity(newPos) instanceof TileAltar) {
-                        BlockAltarEmitter block = (BlockAltarEmitter) worldObj.getBlockState(pos).getBlock();
-                        TileAltar tile = (TileAltar) worldObj.getTileEntity(newPos);
-                        int blood = tile.getCurrentBlood();
+                if (!world.isAirBlock(newPos) && world.getBlockState(newPos).getBlock() instanceof BlockAltar) {
+                    TileEntity tmp = world.getTileEntity(newPos);
+                    if (tmp instanceof TileAltar) {
+                        int blood = ((TileAltar)tmp).getCurrentBlood();
 
                         if (overAsked != oldOverAsked)
                             oldOverAsked = overAsked;
@@ -42,7 +41,7 @@ public class TileAltarEmitter extends TileBase implements ITickable {
                         }
 
                         if (overAsked != oldOverAsked)
-                            worldObj.notifyNeighborsOfStateChange(pos, block);
+                            world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
                     }
                 }
             }

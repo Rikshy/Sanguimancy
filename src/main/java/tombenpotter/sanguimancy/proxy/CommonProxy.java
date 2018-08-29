@@ -36,7 +36,7 @@ public class CommonProxy implements IGuiHandler {
 
         switch (ID) {
             case 0:
-                if (tile != null && tile instanceof TileBloodCleaner) {
+                if (tile instanceof TileBloodCleaner) {
                     return new ContainerLumpCleaner(player, (TileBloodCleaner) tile);
                 }
 
@@ -51,7 +51,7 @@ public class CommonProxy implements IGuiHandler {
 
         switch (ID) {
             case 0:
-                if (tile != null && tile instanceof TileBloodCleaner) {
+                if (tile instanceof TileBloodCleaner) {
                     return new GuiLumpCleaner(player, (TileBloodCleaner) tile);
                 }
 

@@ -1,6 +1,6 @@
 package tombenpotter.sanguimancy.tiles;
 
-import WayofTime.bloodmagic.api.registry.AltarRecipeRegistry;
+import WayofTime.bloodmagic.core.registry.AltarRecipeRegistry;
 import WayofTime.bloodmagic.tile.TileAltar;
 import WayofTime.bloodmagic.util.Utils;
 import net.minecraft.block.state.IBlockState;
@@ -26,14 +26,15 @@ public class TileAltarManipulator extends TileBaseSidedInventory implements ITic
     @Override
     public void update() {
         BlockPos down = pos.down();
-        if (worldObj.getTileEntity(down) != null && worldObj.getTileEntity(down) instanceof TileAltar) {
-            TileAltar tile = (TileAltar) worldObj.getTileEntity(down);
-            if (getInventory(null).getStackInSlot(1) != null)
+        TileEntity tmp = world.getTileEntity(down);
+        if (tmp instanceof TileAltar) {
+            TileAltar tile = (TileAltar) tmp;
+            if (!getInventory(null).getStackInSlot(1).isEmpty())
                 outputToAdjacentInventory();
             if (tile.getStackInSlot(0) != null)
-                moveItemsFromAltar(tile, worldObj.getBlockState(pos));
-            if (getInventory(null).getStackInSlot(0) != null)
-                insertItemInAltar(tile, worldObj.getBlockState(pos));
+                moveItemsFromAltar(tile, world.getBlockState(pos));
+            if (!getInventory(null).getStackInSlot(0).isEmpty())
+                insertItemInAltar(tile, world.getBlockState(pos));
         }
     }
 
@@ -42,23 +43,23 @@ public class TileAltarManipulator extends TileBaseSidedInventory implements ITic
         if (AltarRecipeRegistry.getRecipeForInput(stack) != null && AltarRecipeRegistry.getRecipeForInput(stack).doesRequiredItemMatch(stack, tile.getTier())) {
             AltarRecipeRegistry.AltarRecipe recipe = AltarRecipeRegistry.getRecipeForInput(stack);
             int maxAmount = tile.getCurrentBlood() / recipe.getSyphon();
-            int amount = getInventory(null).getStackInSlot(0).stackSize;
+            int amount = getInventory(null).getStackInSlot(0).getCount();
 
             if (tile.getStackInSlot(0) == null && amount > 0 && amount <= maxAmount) {
-                stack.stackSize = amount;
+                stack.setCount(amount);
                 tile.setInventorySlotContents(0, stack);
                 getInventory(null).extractItem(0, amount, false);
 
                 tile.startCycle();
             } else if (tile.getStackInSlot(0) != null) {
                 ItemStack altarItem = tile.getStackInSlot(0).copy();
-                if (altarItem.isItemEqual(stack) && altarItem.stackSize < altarItem.getMaxStackSize()) {
-                    tile.getStackInSlot(0).stackSize += 1;
+                if (altarItem.isItemEqual(stack) && altarItem.getCount() < altarItem.getMaxStackSize()) {
+                    tile.getStackInSlot(0).grow(1);
                     getInventory(null).extractItem(0, 1, false);
 
-                    worldObj.notifyBlockUpdate(pos, state, state, 3);
-                    IBlockState altar = worldObj.getBlockState(tile.getPos());
-                    worldObj.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
+                    world.notifyBlockUpdate(pos, state, state, 3);
+                    IBlockState altar = world.getBlockState(tile.getPos());
+                    world.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
 
                     cooldown = 10;
                 }
@@ -71,9 +72,9 @@ public class TileAltarManipulator extends TileBaseSidedInventory implements ITic
             ItemStack result = getInventory(null).insertItem(1, tile.getStackInSlot(0).copy(), false);
             tile.setInventorySlotContents(0, result);
 
-            worldObj.notifyBlockUpdate(pos, state, state, 3);
-            IBlockState altar = worldObj.getBlockState(tile.getPos());
-            worldObj.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
+            world.notifyBlockUpdate(pos, state, state, 3);
+            IBlockState altar = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
         }
     }
 
@@ -81,10 +82,10 @@ public class TileAltarManipulator extends TileBaseSidedInventory implements ITic
         ItemStack stack = getInventory(null).getStackInSlot(1);
         EnumFacing dir = EnumFacing.getFront(sideToOutput);
         if (dir != EnumFacing.DOWN) {
-            TileEntity tile = worldObj.getTileEntity(pos.add(dir.getDirectionVec()));
+            TileEntity tile = world.getTileEntity(pos.add(dir.getDirectionVec()));
             if (tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite())) {
                 Utils.insertStackIntoTile(stack.copy(), tile, dir.getOpposite());
-                getInventory(null).extractItem(1, stack.stackSize, false);
+                getInventory(null).extractItem(1, stack.getCount(), false);
             }
         }
     }

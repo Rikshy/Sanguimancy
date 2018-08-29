@@ -18,6 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.oredict.OreDictionary;
@@ -47,20 +48,20 @@ public class RandomUtils {
         IInventory inventory = (IInventory) tileEntity;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack item = inventory.getStackInSlot(i);
-            if (item != null && item.stackSize > 0) {
+            if (!item.isEmpty() && item.getCount() > 0) {
                 float rx = rand.nextFloat() * 0.8F + 0.1F;
                 float ry = rand.nextFloat() * 0.8F + 0.1F;
                 float rz = rand.nextFloat() * 0.8F + 0.1F;
                 EntityItem entityItem = new EntityItem(world, pos.getX() + rx, pos.getY() + ry, pos.getZ() + rz, new ItemStack(item.getItem(), item.stackSize, item.getItemDamage()));
                 if (item.hasTagCompound()) {
-                    entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
+                    entityItem.getItem().setTagCompound(item.getTagCompound().copy());
                 }
                 float factor = 0.05F;
                 entityItem.motionX = rand.nextGaussian() * factor;
                 entityItem.motionY = rand.nextGaussian() * factor + 0.2F;
                 entityItem.motionZ = rand.nextGaussian() * factor;
-                world.spawnEntityInWorld(entityItem);
-                item.stackSize = 0;
+                world.spawnEntity(entityItem);
+                item.setCount(0);
             }
         }
     }
@@ -74,9 +75,9 @@ public class RandomUtils {
             EntityItem entityitem = new EntityItem(world, x + d0, y + d1, z + d2, stack);
             entityitem.setPickupDelay(1);
             if (stack.hasTagCompound()) {
-                entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+                entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
             }
-            world.spawnEntityInWorld(entityitem);
+            world.spawnEntity(entityitem);
             return entityitem;
         }
         return null;
@@ -114,24 +115,21 @@ public class RandomUtils {
     //Shamelessly ripped off of CoFH Lib
     public static boolean fillContainerFromHandler(World world, IFluidHandler handler, EntityPlayer player, FluidStack tankFluid) {
         ItemStack container = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (FluidContainerRegistry.isEmptyContainer(container)) {
-            ItemStack returnStack = FluidContainerRegistry.fillFluidContainer(tankFluid, container);
+        if (FluidUtil..isEmptyContainer(container)) {
+            ItemStack returnStack = FluidUtil.tryFillContainer(container, handler);
             FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(returnStack);
-            if (fluid == null || returnStack == null) {
+            if (fluid == null || returnStack.isEmpty()) {
                 return false;
             }
             if (!player.capabilities.isCreativeMode) {
-                if (container.stackSize == 1) {
+                if (container.getCount() == 1) {
                     container = container.copy();
                     player.inventory.setInventorySlotContents(player.inventory.currentItem, returnStack);
                 } else if (!player.inventory.addItemStackToInventory(returnStack)) {
                     return false;
                 }
                 handler.drain(fluid.amount, true);
-                container.stackSize--;
-                if (container.stackSize <= 0) {
-                    container = null;
-                }
+                container.shrink(1);
             } else {
                 handler.drain(fluid.amount, true);
             }

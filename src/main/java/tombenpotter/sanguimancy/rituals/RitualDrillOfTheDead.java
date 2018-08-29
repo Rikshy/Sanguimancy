@@ -1,11 +1,11 @@
 package tombenpotter.sanguimancy.rituals;
 
 import WayofTime.bloodmagic.ConfigHandler;
-import WayofTime.bloodmagic.api.BloodMagicAPI;
-import WayofTime.bloodmagic.api.ritual.*;
-import WayofTime.bloodmagic.api.saving.SoulNetwork;
-import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
+import WayofTime.bloodmagic.api.impl.BloodMagicAPI;
+import WayofTime.bloodmagic.core.data.SoulNetwork;
+import WayofTime.bloodmagic.ritual.*;
 import WayofTime.bloodmagic.tile.TileAltar;
+import WayofTime.bloodmagic.util.helper.NetworkHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,8 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import tombenpotter.sanguimancy.Sanguimancy;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class RitualDrillOfTheDead extends Ritual {
 
@@ -80,11 +81,11 @@ public class RitualDrillOfTheDead extends Ritual {
             List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, range);
 
             for (EntityLivingBase entity : entities) {
-                if (ConfigHandler.wellOfSufferingBlacklist.contains(entity.getClass().getSimpleName()))
+                if (Arrays.asList(ConfigHandler.blacklist.wellOfSuffering).contains(entity.getClass().getSimpleName()))
                     continue;
 
                 String simpleClassName = entity.getClass().getSimpleName();
-                if (BloodMagicAPI.getEntitySacrificeValues().containsKey(simpleClassName) && BloodMagicAPI.getEntitySacrificeValues().get(simpleClassName) <= 0)
+                if (BloodMagicAPI.INSTANCE.getValueManager().getSacrificial().containsKey(simpleClassName) && BloodMagicAPI.getEntitySacrificeValues().get(simpleClassName) <= 0)
                     continue;
 
                 if (entity.isEntityAlive() && !(entity instanceof EntityPlayer)) {
@@ -110,9 +111,7 @@ public class RitualDrillOfTheDead extends Ritual {
     }
 
     @Override
-    public ArrayList<RitualComponent> getComponents() {
-        ArrayList<RitualComponent> components = new ArrayList<RitualComponent>();
-
+    public void gatherComponents(Consumer<RitualComponent> components) {
         this.addCornerRunes(components, 1, 0, EnumRuneType.DUSK);
         this.addCornerRunes(components, 2, -1, EnumRuneType.DUSK);
         this.addParallelRunes(components, 2, -1, EnumRuneType.DUSK);
@@ -120,8 +119,6 @@ public class RitualDrillOfTheDead extends Ritual {
         this.addOffsetRunes(components, 2, 4, -1, EnumRuneType.DUSK);
         this.addOffsetRunes(components, 1, 4, 0, EnumRuneType.DUSK);
         this.addParallelRunes(components, 4, 1, EnumRuneType.DUSK);
-
-        return components;
     }
 
     @Override

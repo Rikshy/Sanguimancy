@@ -1,11 +1,12 @@
 package tombenpotter.sanguimancy.tiles;
 
-import WayofTime.bloodmagic.api.registry.AltarRecipeRegistry;
 import WayofTime.bloodmagic.block.BlockAltar;
+import WayofTime.bloodmagic.core.registry.AltarRecipeRegistry;
 import WayofTime.bloodmagic.tile.TileAltar;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -23,14 +24,15 @@ public class TileAltarDiviner extends TileBaseInventory implements ITickable {
         if (noCooldown()) {
             for (EnumFacing dir : EnumFacing.VALUES) {
                 BlockPos newPos = pos.add(dir.getDirectionVec());
-                if (!worldObj.isAirBlock(newPos) && worldObj.getBlockState(newPos).getBlock() instanceof BlockAltar) {
-                    if (worldObj.getTileEntity(newPos) != null && worldObj.getTileEntity(newPos) instanceof TileAltar) {
-                        TileAltar tile = (TileAltar) worldObj.getTileEntity(newPos);
+                if (!world.isAirBlock(newPos) && world.getBlockState(newPos).getBlock() instanceof BlockAltar) {
+                    TileEntity tmp = world.getTileEntity(newPos);
+                    if (tmp instanceof TileAltar) {
+                        TileAltar tile = (TileAltar) tmp;
 
-                        if (getInventory(null).getStackInSlot(0) != null) {
-                            checkBloodAndMoveItems(tile, worldObj.getBlockState(pos));
-                        } else if (getInventory(null) == null && tile.getStackInSlot(0) != null) {
-                            moveItemFromAltar(tile, worldObj.getBlockState(pos));
+                        if (!getInventory(null).getStackInSlot(0).isEmpty()) {
+                            checkBloodAndMoveItems(tile, world.getBlockState(pos));
+                        } else if (getInventory(null) == null && !tile.getStackInSlot(0).isEmpty()) {
+                            moveItemFromAltar(tile, world.getBlockState(pos));
                         }
                     }
                 }
@@ -48,20 +50,20 @@ public class TileAltarDiviner extends TileBaseInventory implements ITickable {
 
 
             if (tile.getStackInSlot(0) == null && amount > 0 && amount <= maxAmount) {
-                stack.stackSize = amount;
+                stack.setCount(amount);
                 tile.setInventorySlotContents(0, stack);
                 getInventory(null).extractItem(0, amount, false);
 
                 tile.startCycle();
             } else if (tile.getStackInSlot(0) != null) {
                 ItemStack altarItem = tile.getStackInSlot(0).copy();
-                if (altarItem.isItemEqual(stack) && altarItem.stackSize < altarItem.getMaxStackSize()) {
-                    tile.getStackInSlot(0).stackSize += 1;
+                if (altarItem.isItemEqual(stack) && altarItem.getCount() < altarItem.getMaxStackSize()) {
+                    tile.getStackInSlot(0).grow(1 );
                     getInventory(null).extractItem(0, 1, false);
 
-                    worldObj.notifyBlockUpdate(pos, state, state, 3);
-                    IBlockState altar = worldObj.getBlockState(tile.getPos());
-                    worldObj.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
+                    world.notifyBlockUpdate(pos, state, state, 3);
+                    IBlockState altar = world.getBlockState(tile.getPos());
+                    world.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
 
                     cooldown = 10;
                 }
@@ -74,11 +76,11 @@ public class TileAltarDiviner extends TileBaseInventory implements ITickable {
         ItemStack stack = tile.getStackInSlot(0).copy();
         if (!tile.isActive() && tile.getProgress() <= 0) {
             getInventory(null).insertItem(0, stack, false);
-            tile.setInventorySlotContents(0, null);
+            tile.setInventorySlotContents(0, ItemStack.EMPTY);
 
-            worldObj.notifyBlockUpdate(pos, state, state, 3);
-            IBlockState altar = worldObj.getBlockState(tile.getPos());
-            worldObj.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
+            world.notifyBlockUpdate(pos, state, state, 3);
+            IBlockState altar = world.getBlockState(tile.getPos());
+            world.notifyBlockUpdate(tile.getPos(), altar, altar, 3);
 
             cooldown = 30;
         }

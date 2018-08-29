@@ -1,6 +1,6 @@
 package tombenpotter.sanguimancy.blocks;
 
-import WayofTime.bloodmagic.api.orb.IBloodOrb;
+import WayofTime.bloodmagic.orb.IBloodOrb;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -16,7 +16,7 @@ import tombenpotter.sanguimancy.Sanguimancy;
 import tombenpotter.sanguimancy.tiles.TileBloodInterface;
 import tombenpotter.sanguimancy.util.RandomUtils;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class BlockBloodInterface extends BlockContainer {
 
@@ -28,11 +28,12 @@ public class BlockBloodInterface extends BlockContainer {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity te = world.getTileEntity(pos);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+       TileEntity te = world.getTileEntity(pos);
 
-        if (te != null && te instanceof TileBloodInterface) {
+        if (te instanceof TileBloodInterface) {
             TileBloodInterface bloodInterface = (TileBloodInterface) te;
+            ItemStack heldItem = player.getHeldItem(hand);
 
             if (!(heldItem.getItem() instanceof IBloodOrb)) {
                 return true;
@@ -50,20 +51,20 @@ public class BlockBloodInterface extends BlockContainer {
     }
 
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+    public boolean removedByPlayer(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
         if (!player.capabilities.isCreativeMode)
             RandomUtils.dropItems(world, pos);
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         RandomUtils.dropItems(world, pos);
         super.breakBlock(world, pos, state);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
         return new TileBloodInterface();
     }
 
@@ -75,7 +76,7 @@ public class BlockBloodInterface extends BlockContainer {
     @Override
     public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te != null && te instanceof TileBloodInterface) {
+        if (te instanceof TileBloodInterface) {
             TileBloodInterface bloodInterface = (TileBloodInterface) te;
             return bloodInterface.getComparatorLevel();
         }

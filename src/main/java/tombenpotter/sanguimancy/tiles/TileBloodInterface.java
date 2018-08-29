@@ -1,9 +1,9 @@
 package tombenpotter.sanguimancy.tiles;
 
-import WayofTime.bloodmagic.api.Constants;
-import WayofTime.bloodmagic.api.orb.IBloodOrb;
-import WayofTime.bloodmagic.api.util.helper.NBTHelper;
-import WayofTime.bloodmagic.api.util.helper.NetworkHelper;
+import WayofTime.bloodmagic.orb.IBloodOrb;
+import WayofTime.bloodmagic.util.Constants;
+import WayofTime.bloodmagic.util.helper.NBTHelper;
+import WayofTime.bloodmagic.util.helper.NetworkHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -35,8 +35,8 @@ public class TileBloodInterface extends TileComputerBase implements ITickable {
     }
 
     private void triggerUpdate() {
-        if (!worldObj.isRemote)
-            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+        if (!world.isRemote)
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
     }
 
     private ItemStack getOrb() {
@@ -49,7 +49,7 @@ public class TileBloodInterface extends TileComputerBase implements ITickable {
     }
 
     public int getLifeEssence() {
-        if (ownerName == null || getOrb() == null) return 0;
+        if (ownerName == null || getOrb().isEmpty()) return 0;
         return Math.min(maxOrbLP, getCurrentEssence(getOrb()));
     }
 
@@ -79,21 +79,21 @@ public class TileBloodInterface extends TileComputerBase implements ITickable {
     }
 
     public void updateOrb() {
-        maxOrbLP = getOrb() == null ? 0 : ((IBloodOrb) getOrb().getItem()).getMaxEssence(getOrb().getItemDamage());
-        ownerName = getOrb() == null || !getOrb().hasTagCompound() || !getOrb().getTagCompound().hasKey(Constants.NBT.OWNER_UUID) ? null : getOrb().getTagCompound().getString(Constants.NBT.OWNER_UUID);
+        maxOrbLP = getOrb().isEmpty() ? 0 : ((IBloodOrb) getOrb().getItem()).getOrb(getOrb()).getCapacity();
+        ownerName = getOrb().isEmpty() || !getOrb().hasTagCompound() || !getOrb().getTagCompound().hasKey(Constants.NBT.OWNER_UUID) ? null : getOrb().getTagCompound().getString(Constants.NBT.OWNER_UUID);
     }
 
     public void updateRedstone() {
         int result = calcRedstone();
         if (result != redstone) {
             redstone = result;
-            if (worldObj != null && !worldObj.isRemote)
-                worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+            if (world != null && !world.isRemote)
+                world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
         }
     }
 
     public int calcRedstone() {
-        if (getInventory(null).getStackInSlot(0) == null || maxOrbLP == 0)
+        if (getInventory(null).getStackInSlot(0).isEmpty() || maxOrbLP == 0)
             return 0;
         return 15 * getLifeEssence() / maxOrbLP;
     }
@@ -102,7 +102,7 @@ public class TileBloodInterface extends TileComputerBase implements ITickable {
     public void markDirty() {
         super.markDirty();
 
-        if (worldObj != null && !worldObj.isRemote) {
+        if (world != null && !world.isRemote) {
             PacketBloodInterfaceUpdate message = new PacketBloodInterfaceUpdate(this);
             PacketHandler.INSTANCE.sendToAll(message);
         }
